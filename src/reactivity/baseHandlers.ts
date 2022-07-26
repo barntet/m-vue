@@ -1,4 +1,5 @@
 import { track, trigger } from './effect';
+import { ReactiveFlags } from './reactive';
 
 // 优化
 const get = createGetter();
@@ -7,6 +8,12 @@ const readonlyGet = createGetter(true);
 
 function createGetter(isReadonly = false) {
 	return function get(target, key) {
+		if (key === ReactiveFlags.IS_REACTIVE) {
+			return !isReadonly;
+		} else if (key === ReactiveFlags.IS_READONLY) {
+			return isReadonly;
+		}
+
 		const res = Reflect.get(target, key);
 
 		if (!isReadonly) {
@@ -35,7 +42,7 @@ export const readonlyHandlers = {
 	get: readonlyGet,
 
 	set(target, key, value) {
-		console.warn('not ');
+		console.warn(`Key ${key} connot be set`);
 		return true;
 	},
 };
