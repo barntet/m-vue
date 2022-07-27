@@ -1,5 +1,9 @@
 import { extend } from '../shared';
 
+let activeEffect = void 0;
+let shouldTrack;
+const targetMap = new Map();
+
 class ReactiveEffect {
 	active = true;
 	deps = [];
@@ -10,13 +14,25 @@ class ReactiveEffect {
 	}
 
 	run() {
-		activeEffect = this;
-
+		// 执行fn但不收集依赖
 		if (!this.active) {
 			return this._fn();
 		}
 
-		return this._fn();
+		// 执行fn 收集依赖
+		// 可以开始收集依赖了
+		shouldTrack = true;
+
+		// 利用全局属性来获取当前的effect
+		activeEffect = this as any;
+		//执行传入的fn
+		const result = this._fn();
+
+		// 重置
+		shouldTrack = false;
+		activeEffect = undefined;
+
+		return result;
 	}
 
 	stop() {
@@ -30,8 +46,17 @@ class ReactiveEffect {
 	}
 }
 
-const targetMap = new Map();
+function cleanupEffect(effect: any) {
+	effect.deps.forEach((dep: any) => {
+		dep.delete(effect);
+	});
+
+	effect.deps.length = 0;
+}
+
 export function track(target, key) {
+	if (!isTracting()) return;
+
 	// target -> key -> dep
 	let depsMap = targetMap.get(target);
 	if (!depsMap) {
@@ -44,12 +69,15 @@ export function track(target, key) {
 		dep = new Set();
 		depsMap.set(key, dep);
 	}
-	if (!activeEffect) return;
 
+	// 如果已经在dep中了
+	if (dep.has(activeEffect)) return;
 	dep.add(activeEffect);
 	activeEffect.deps.push(dep);
+}
 
-	// const dep = new Set();
+function isTracting() {
+	return shouldTrack && activeEffect !== undefined;
 }
 
 export function trigger(target, key) {
@@ -64,7 +92,6 @@ export function trigger(target, key) {
 	}
 }
 
-let activeEffect;
 export function effect(fn, options: any = {}) {
 	const _effect = new ReactiveEffect(fn, options.scheduler);
 
@@ -79,12 +106,4 @@ export function effect(fn, options: any = {}) {
 
 export function stop(runner) {
 	runner.effect.stop();
-}
-
-function cleanupEffect(effect: any) {
-	effect.deps.forEach(dep => {
-		dep.delete(effect);
-	});
-
-	effect.deps.length = 0;
 }
