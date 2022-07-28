@@ -21,4 +21,20 @@ describe('readonly', () => {
 
 		expect(console.warn).toBeCalled();
 	});
+
+	test('nested reavtives', () => {
+		const original = {
+			nested: { foo: 1 },
+			array: [{ bar: 2 }],
+		};
+		const wrapped = readonly(original);
+		expect(isReadonly(wrapped)).toBe(true);
+		expect(isReadonly(wrapped.nested)).toBe(true);
+		expect(isReadonly(wrapped.array)).toBe(true);
+		expect(isReadonly(wrapped.array[0])).toBe(true);
+		expect(isReadonly(original)).toBe(false);
+		expect(isReadonly(original.nested)).toBe(false);
+		expect(isReadonly(original.array)).toBe(false);
+		expect(isReadonly(original.array[0])).toBe(false);
+	});
 });
