@@ -13,5 +13,12 @@ describe('ref', () => {
 		});
 		expect(calls).toBe(1);
 		expect(dummy).toBe(1);
+		a.value = 2;
+		expect(calls).toBe(2);
+		expect(dummy).toBe(2);
+		// same value should not trigger
+		a.value = 2;
+		expect(calls).toBe(2);
+		expect(dummy).toBe(2);
 	});
 });

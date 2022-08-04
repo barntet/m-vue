@@ -54,6 +54,7 @@ function cleanupEffect(effect: any) {
 	effect.deps.length = 0;
 }
 
+// 收集依赖
 export function track(target, key) {
 	if (!isTracting()) return;
 
@@ -69,20 +70,28 @@ export function track(target, key) {
 		dep = new Set();
 		depsMap.set(key, dep);
 	}
+	trackEffects(dep);
+}
 
+export function trackEffects(dep) {
 	// 如果已经在dep中了
 	if (dep.has(activeEffect)) return;
 	dep.add(activeEffect);
 	activeEffect.deps.push(dep);
 }
 
-function isTracting() {
+export function isTracting() {
 	return shouldTrack && activeEffect !== undefined;
 }
 
+// 触发依赖
 export function trigger(target, key) {
 	let depsMap = targetMap.get(target);
 	let dep = depsMap.get(key);
+	triggerEffects(dep);
+}
+
+export function triggerEffects(dep) {
 	for (const effect of dep) {
 		if (effect.scheduler) {
 			effect.scheduler();
