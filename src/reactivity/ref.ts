@@ -10,6 +10,7 @@ class RefImpl {
 	private _value: any;
 	public dep;
 	private _rawValue: any;
+	public __v_isRef = true;
 
 	constructor(value) {
 		// 存储传入的原始值，因为_value如果是对象会经过reactive包裹
@@ -53,4 +54,13 @@ function trackRefValue(ref) {
 export function ref(value) {
 	const refImpl = new RefImpl(value);
 	return refImpl;
+}
+
+export function isRef(value) {
+	return !!value.__v_isRef;
+}
+
+// 把ref里面的值拿到
+export function unRef(ref) {
+	return isRef(ref) ? ref.value : ref;
 }
