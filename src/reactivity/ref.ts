@@ -64,3 +64,21 @@ export function isRef(value) {
 export function unRef(ref) {
 	return isRef(ref) ? ref.value : ref;
 }
+
+export function proxyRefs(objectWithRefs) {
+	return new Proxy(objectWithRefs, {
+		get(target, key) {
+			return unRef(Reflect.get(target, key));
+		},
+
+		set(target, key, value) {
+			// 如果target[value]是ref但是传入的value不是ref
+			const oldValue = target[key];
+			if (isRef(oldValue) && !isRef(value)) {
+				return (target[key].value = value);
+			} else {
+				return Reflect.set(target, key, value);
+			}
+		},
+	});
+}

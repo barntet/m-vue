@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { effect } from '../effect';
 import { reactive } from '../reactive';
-import { ref, isRef, unRef } from '../ref';
+import { ref, isRef, unRef, proxyRefs } from '../ref';
 
 describe('ref', () => {
 	test('should be reactive', () => {
@@ -44,9 +44,29 @@ describe('ref', () => {
 		expect(isRef(b)).toBe(false);
 	});
 
-	test('unRef',()=>{
+	test('unRef', () => {
 		const a = ref(1);
-		expect(unRef(a)).toBe(1)
+		expect(unRef(a)).toBe(1);
 		expect(unRef(1)).toBe(1);
-	})
+	});
+
+	test('proxyRefs', () => {
+		const user = {
+			age: ref(10),
+			name: 'jack',
+		};
+		const proxyRef = proxyRefs(user);
+		expect(user.age.value).toBe(10);
+		expect(proxyRef.age).toBe(10);
+		expect(proxyRef.name).toBe('jack');
+
+		proxyRef.age = 11;
+		expect(proxyRef.age).toBe(11);
+		expect(user.age.value).toBe(11);
+
+		proxyRef.name = ref('xiaohong');
+		expect(proxyRef.name).toBe('xiaohong');
+		expect(user.name.value).toBe('xiaohong');
+		
+	});
 });
