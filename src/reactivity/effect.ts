@@ -4,7 +4,7 @@ let activeEffect = void 0;
 let shouldTrack;
 const targetMap = new Map();
 
-class ReactiveEffect {
+export class ReactiveEffect {
 	active = true;
 	deps = [];
 	public onStop?: () => void;
