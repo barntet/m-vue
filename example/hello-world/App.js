@@ -1,3 +1,5 @@
+import { h } from '../../lib/guide-m-vue.esm.js';
+
 export const App = {
   setup() {
     return {
@@ -6,6 +8,6 @@ export const App = {
   },
 
   render() {
-    return h('div', `hi ${this.msg}`);
+    return h('div', {}, [h('p', {}, 'hello'), h('span', {}, 'hello')]);
   },
 };
