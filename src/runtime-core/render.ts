@@ -21,8 +21,8 @@ function processElement(vnode: any, container: any) {
 }
 
 function mountElement(vnode: any, container: any) {
-  console.log(vnode);
-  const el = document.createElement(vnode.type);
+  // 将el存起来
+  const el = (vnode.el = document.createElement(vnode.type));
 
   const { children, props } = vnode;
 
@@ -51,15 +51,18 @@ function processComponent(vnode: any, container: any) {
   mountComponent(vnode, container);
 }
 
-function mountComponent(vnode: any, container: any) {
-  const instance = createComponentInstance(vnode);
+function mountComponent(initialVNode: any, container: any) {
+  const instance = createComponentInstance(initialVNode);
 
   setupComponent(instance);
-  setupRenderEffect(instance, container);
+  setupRenderEffect(instance, initialVNode, container);
 }
 
-function setupRenderEffect(instance: any, container: any) {
-  const subTree = instance.render();
+function setupRenderEffect(instance: any, vnode: any, container: any) {
+  const { proxy } = instance;
+  const subTree = instance.render.call(proxy);
 
   patch(subTree, container);
+
+  vnode.el = subTree.el;
 }
