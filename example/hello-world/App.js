@@ -4,7 +4,7 @@ window.self = null;
 export const App = {
   setup() {
     return {
-      msg: 'hi v-11ue',
+      msg: 'hi v-11u22',
     };
   },
 
