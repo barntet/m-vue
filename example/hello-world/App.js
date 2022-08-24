@@ -10,6 +10,18 @@ export const App = {
 
   render() {
     window.self = this;
-    return h('div', {}, [h('p', {}, this.msg), h('span', {}, 'hello')]);
+    return h(
+      'div',
+      {
+        class: ['a', 'b'],
+        onClick: () => {
+          console.log('click');
+        },
+        onMousedown: () => {
+          console.log(this);
+        },
+      },
+      [h('p', {}, this.msg), h('span', {}, 'hello')]
+    );
   },
 };

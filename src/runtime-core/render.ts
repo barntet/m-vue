@@ -36,7 +36,16 @@ function mountElement(vnode: any, container: any) {
   // props
   for (const key in props) {
     const val = props[key];
-    el.setAttribute(key, val);
+
+    // 先写一个具体的再来优化
+    // if (key === 'onClick') {
+    const isOn = (key: string) => /^on[A-Z]/.test(key);
+    if (isOn(key)) {
+      const event = key.slice(2).toLowerCase();
+      el.addEventListener(event, val);
+    } else {
+      el.setAttribute(key, val);
+    }
   }
   container.append(el);
 }
