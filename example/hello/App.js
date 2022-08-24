@@ -10,9 +10,18 @@ export default {
 
   render() {
     window.self = this;
-    return h('div', { class: 'a' }, [
-      h('span', {}, `hi ${this.msg}`),
-      h('p', {}, '1'),
-    ]);
+    return h(
+      'div',
+      {
+        class: 'a',
+        onClick: () => {
+          console.log('click');
+        },
+        onMousedown:()=>{
+          console.log('mousedown')
+        }
+      },
+      [h('span', {}, `hi ${this.msg}`), h('p', {}, '1')]
+    );
   },
 };
