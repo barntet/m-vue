@@ -1,13 +1,18 @@
 import { PublicInstanceProxyHandles } from './componentPubilcInstance';
 import { initProps } from './componentProps';
 import { shallowReadonly } from '../reactivity/reactive';
+import { emit } from './componentEmit';
 
 export function createComponentInstance(vnode: any) {
   const component = {
     vnode,
     type: vnode.type,
     setupState: {},
+    emit: () => {},
   };
+
+  component.emit = emit.bind(null, component) as any;
+
   return component;
 }
 
@@ -28,7 +33,9 @@ function setupStatefulComponent(instance: any) {
   const { setup } = component;
 
   if (setup) {
-    const setupResule = setup(shallowReadonly(instance.props));
+    const setupResule = setup(shallowReadonly(instance.props), {
+      emit: instance.emit,
+    });
     // setup 可以返回fn也可以返回obj， fn就认为是rende函数，ojb就注入到当前组件上下文中
     handleSetupResult(instance, setupResule);
   }
