@@ -1,7 +1,9 @@
 import { h } from '../../lib/guide-m-vue.esm.js';
+import { Foo } from './Foo.js'
 
 window.self = null;
 export const App = {
+  name: 'App',
   setup() {
     return {
       msg: 'hi v-11u22',
@@ -21,7 +23,7 @@ export const App = {
           console.log(this);
         },
       },
-      [h('p', {}, this.msg), h('span', {}, 'hello')]
+      [h(Foo, { count: 1 })]
     );
   },
 };

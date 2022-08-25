@@ -1,3 +1,4 @@
+import { isObject } from '../shared/index';
 import {
 	mutableHandlers,
 	readonlyHandlers,
@@ -35,5 +36,10 @@ export function isProxy(value) {
 }
 
 function createActiveObject(raw: any, baseHandlers) {
+
+	if (!isObject(raw)) {
+		console.warn(`raw ${raw} must a object`);
+		return raw
+	}
 	return new Proxy(raw, baseHandlers);
 }
