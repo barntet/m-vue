@@ -1,5 +1,5 @@
 import { hasChange, isObject } from './../shared/index';
-import { trackEffects, triggerEffects, isTracting } from './effect';
+import { trackEffects, triggerEffects, isTracking } from './effect';
 import { reactive } from './reactive';
 
 class RefImpl {
@@ -45,7 +45,7 @@ function convert(value) {
 
 function trackRefValue(ref) {
 	// activeEffect不等于undefined，才调用收集
-	if (isTracting()) {
+	if (isTracking()) {
 		// 收集依赖
 		trackEffects(ref.dep);
 	}

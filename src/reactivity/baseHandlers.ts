@@ -53,7 +53,7 @@ export const readonlyHandlers = {
 	get: readonlyGet,
 
 	set(target, key, value) {
-		console.warn(`Key ${key} connot be set`);
+		console.warn(`Key ${key} cannot be set`);
 		return true;
 	},
 };

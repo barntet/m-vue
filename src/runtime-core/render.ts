@@ -1,5 +1,4 @@
 import { ShapeFlags } from '../shared/shapeFlags';
-import { isObject } from './../shared/index';
 import { createComponentInstance, setupComponent } from './component';
 
 export function render(vnode: any, container: any) {

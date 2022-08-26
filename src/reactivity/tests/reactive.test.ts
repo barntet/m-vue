@@ -13,7 +13,7 @@ describe('reactive', () => {
 		expect(isProxy(observed)).toBe(true);
 	});
 
-	test('nested reactives', () => {
+	test('nested reactive', () => {
 		const original = {
 			nested: { foo: 1 },
 			array: [{ bar: 2 }],

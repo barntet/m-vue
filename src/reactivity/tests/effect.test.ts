@@ -19,7 +19,7 @@ describe('effect', () => {
 		expect(dummy).toBe(7);
 	});
 
-	test('should ruturn runner when call effect', () => {
+	test('should return runner when call effect', () => {
 		let count = 10;
 		const runner = effect(() => {
 			count++;

@@ -24,7 +24,7 @@ describe('readonly', () => {
 		expect(console.warn).toBeCalled();
 	});
 
-	test('nested reavtives', () => {
+	test('nested reactive', () => {
 		const original = {
 			nested: { foo: 1 },
 			array: [{ bar: 2 }],
