@@ -9,55 +9,55 @@ const readonlyGet = createGetter(true);
 const shallowReadonlyGet = createGetter(true, true);
 
 function createGetter(isReadonly = false, shallow = false) {
-	return function get(target, key) {
-		if (key === ReactiveFlags.IS_REACTIVE) {
-			return !isReadonly;
-		} else if (key === ReactiveFlags.IS_READONLY) {
-			return isReadonly;
-		}
+  return function get(target, key) {
+    if (key === ReactiveFlags.IS_REACTIVE) {
+      return !isReadonly;
+    } else if (key === ReactiveFlags.IS_READONLY) {
+      return isReadonly;
+    }
 
-		const res = Reflect.get(target, key);
+    const res = Reflect.get(target, key);
 
-		// shallow
-		if (shallow) {
-			return res;
-		}
+    // shallow
+    if (shallow) {
+      return res;
+    }
 
-		if (!isReadonly) {
-			track(target, key);
-		}
+    if (!isReadonly) {
+      track(target, key);
+    }
 
-		if (isObject(res)) {
-			return isReadonly ? readonly(res) : reactive(res);
-		}
+    if (isObject(res)) {
+      return isReadonly ? readonly(res) : reactive(res);
+    }
 
-		return res;
-	};
+    return res;
+  };
 }
 
 function createSetter() {
-	return function set(target, key, value) {
-		const res = Reflect.set(target, key, value);
+  return function set(target, key, value) {
+    const res = Reflect.set(target, key, value);
 
-		trigger(target, key);
-		return res;
-	};
+    trigger(target, key);
+    return res;
+  };
 }
 
 export const mutableHandlers = {
-	get,
-	set,
+  get,
+  set,
 };
 
 export const readonlyHandlers = {
-	get: readonlyGet,
+  get: readonlyGet,
 
-	set(target, key, value) {
-		console.warn(`Key ${key} connot be set`);
-		return true;
-	},
+  set(target, key, value) {
+    console.warn(`Key ${key} cannot be set`);
+    return true;
+  },
 };
 
 export const shallowReadonlyHandlers = extend({}, readonlyHandlers, {
-	get: shallowReadonlyGet,
+  get: shallowReadonlyGet,
 });
