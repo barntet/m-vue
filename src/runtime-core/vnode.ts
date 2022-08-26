@@ -16,6 +16,13 @@ export function createVNode(type: any, props?: any, children?: any) {
     vnode.shapeFlag |= ShapeFlags.ARRAY_CHILDREN;
   }
 
+  //必须是组件且有children
+  if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENTS) {
+    if (typeof vnode.children === 'object') {
+      vnode.shapeFlag |= ShapeFlags.SLOT_CHILDREN;
+    }
+  }
+
   return vnode;
 }
 
