@@ -1,6 +1,7 @@
 import { isOn } from '../shared/index';
 import { ShapeFlags } from '../shared/ShapeFlags';
 import { createComponentInstance, setupComponent } from './component';
+import { Fragment, Text } from './vnode';
 
 export function render(vnode: any, container: any) {
   // patch
@@ -9,12 +10,30 @@ export function render(vnode: any, container: any) {
 }
 
 function patch(vnode: any, container: any) {
-  // 判断vnode是element还是component
-  if (vnode.shapeFlag & ShapeFlags.ELEMENT) {
-    processElement(vnode, container);
-  } else if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-    processComponent(vnode, container);
+  switch (vnode.type) {
+    case Fragment:
+      processFragment(vnode, container);
+      break;
+    case Text:
+      processText(vnode, container);
+      break;
+    default:
+      // 判断vnode是element还是component
+      if (vnode.shapeFlag & ShapeFlags.ELEMENT) {
+        processElement(vnode, container);
+      } else if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+        processComponent(vnode, container);
+      }
   }
+}
+
+function processFragment(vnode, container) {
+  mountChildren(vnode, container);
+}
+
+function processText(vnode, container) {
+  const el = (vnode.el = document.createTextNode(vnode.children));
+  container.append(el);
 }
 
 function processElement(vnode: any, container: any) {

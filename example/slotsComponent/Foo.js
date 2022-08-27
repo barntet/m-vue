@@ -1,4 +1,4 @@
-import { h, renderSlots } from '../../lib/guide-m-vue.esm.js';
+import { h, renderSlots, createTextVNode } from '../../lib/guide-m-vue.esm.js';
 
 export const Foo = {
   setup() {},
@@ -15,6 +15,7 @@ export const Foo = {
       renderSlots(this.$slots, 'header', { age }),
       h('span', {}, 'foo'),
       renderSlots(this.$slots, 'footer'),
+      createTextVNode('hhh'),
     ]);
   },
 };
