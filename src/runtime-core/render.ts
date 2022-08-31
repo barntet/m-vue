@@ -6,10 +6,10 @@ import { Fragment, Text } from './vnode';
 export function render(vnode: any, container: any) {
   // patch
 
-  patch(vnode, container);
+  patch(vnode, container, null);
 }
 
-function patch(vnode: any, container: any) {
+function patch(vnode: any, container: any, parent: any = null) {
   switch (vnode.type) {
     case Fragment:
       processFragment(vnode, container);
@@ -22,7 +22,7 @@ function patch(vnode: any, container: any) {
       if (vnode.shapeFlag & ShapeFlags.ELEMENT) {
         processElement(vnode, container);
       } else if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-        processComponent(vnode, container);
+        processComponent(vnode, container, parent);
       }
   }
 }
@@ -75,12 +75,12 @@ function mountChildren(vnode: any, container: any) {
   });
 }
 
-function processComponent(vnode: any, container: any) {
-  mountComponent(vnode, container);
+function processComponent(vnode: any, container: any, parent: any) {
+  mountComponent(vnode, container, parent);
 }
 
-function mountComponent(initialVNode: any, container: any) {
-  const instance = createComponentInstance(initialVNode);
+function mountComponent(initialVNode: any, container: any, parent: any) {
+  const instance = createComponentInstance(initialVNode, parent);
 
   setupComponent(instance);
   setupRenderEffect(instance, initialVNode, container);
@@ -90,7 +90,7 @@ function setupRenderEffect(instance: any, vnode: any, container: any) {
   const { proxy } = instance;
   const subTree = instance.render.call(proxy);
 
-  patch(subTree, container);
+  patch(subTree, container, instance);
 
   vnode.el = subTree.el;
 }
