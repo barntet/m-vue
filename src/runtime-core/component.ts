@@ -11,7 +11,7 @@ export function createComponentInstance(vnode: any) {
     setupState: {},
     props: {},
     slots: {},
-    emit: () => {},
+    emit: () => { },
   };
 
   component.emit = emit.bind(null, component) as any;
@@ -36,9 +36,12 @@ function setupStatefulComponent(instance: any) {
   const { setup } = component;
 
   if (setup) {
+    setCurrentInstance(instance);
     const setupResult = setup(shallowReadonly(instance.props), {
       emit: instance.emit,
     });
+    setCurrentInstance(null);
+
     // setup 可以返回fn也可以返回obj， fn就认为是rende函数，ojb就注入到当前组件上下文中
     handleSetupResult(instance, setupResult);
   }
@@ -63,4 +66,13 @@ function finishComponentSetup(instance: any) {
   if (Component.render) {
     instance.render = Component.render;
   }
+}
+
+let currentInstance: any = null
+export function getCurrentInstance() {
+  return currentInstance
+}
+
+function setCurrentInstance(instance: any) {
+  currentInstance = instance;
 }
