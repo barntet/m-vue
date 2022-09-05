@@ -3,31 +3,31 @@ import { createComponentInstance, setupComponent } from './component';
 import { Fragment, Text } from './vnode';
 
 export function render(vnode: any, container: any) {
-  patch(vnode, container);
+  patch(vnode, container, null);
 }
 
-function patch(vnode: any, container: any) {
+function patch(vnode: any, container: any, parent: any) {
   // 处理组件，判断是什么类型
 
   switch (vnode.type) {
     case Fragment:
-      processFragment(vnode, container);
+      processFragment(vnode, container, parent);
       break;
     case Text:
       processText(vnode, container);
       break;
     default:
       if (vnode.shapeFlag & ShapeFlags.ELEMENT) {
-        processElement(vnode, container);
+        processElement(vnode, container, parent);
       } else if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENTS) {
         // 处理组件
-        processComponent(vnode, container);
+        processComponent(vnode, container, parent);
       }
   }
 }
 
-function processFragment(vnode: any, container: any) {
-  mountChildren(vnode, container)
+function processFragment(vnode: any, container: any, parent: any) {
+  mountChildren(vnode, container, parent)
 }
 
 function processText(vnode: any, container: any) {
@@ -35,11 +35,11 @@ function processText(vnode: any, container: any) {
   container.append(el)
 }
 
-function processElement(vnode: any, container: any) {
-  mountElement(vnode, container);
+function processElement(vnode: any, container: any, parent: any) {
+  mountElement(vnode, container, parent);
 }
 
-function mountElement(vnode: any, container: any) {
+function mountElement(vnode: any, container: any, parent: any) {
   // $el 需要存起来
   const el = (vnode.el = document.createElement(vnode.type));
 
@@ -65,24 +65,24 @@ function mountElement(vnode: any, container: any) {
   if (vnode.shapeFlag & ShapeFlags.TEXT_CHILDREN) {
     el.textContent = children;
   } else if (vnode.shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-    mountChildren(vnode, el);
+    mountChildren(vnode, el, parent);
   }
 
   container.append(el);
 }
 
-function mountChildren(vnode: any, container: any) {
+function mountChildren(vnode: any, container: any, parent: any) {
   vnode.children.forEach((v: any) => {
-    patch(v, container);
+    patch(v, container, parent);
   });
 }
 
-function processComponent(vnode: any, container: any) {
-  mountComponent(vnode, container);
+function processComponent(vnode: any, container: any, parnet: any) {
+  mountComponent(vnode, container, parnet)
 }
 
-function mountComponent(vnode: any, container: any) {
-  const instance = createComponentInstance(vnode);
+function mountComponent(vnode: any, container: any, parnet: any) {
+  const instance = createComponentInstance(vnode, parnet);
 
   setupComponent(instance);
   setupRenderEffect(instance, vnode, container);
@@ -93,7 +93,7 @@ function setupRenderEffect(instance: any, vnode: any, container: any) {
   const subTree = instance.render.call(proxy);
   // subTree 就是一个虚拟节点树
 
-  patch(subTree, container);
+  patch(subTree, container, instance);
   // 所有element都mount
   vnode.el = subTree.el;
 }
